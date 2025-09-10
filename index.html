@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Entrar • Estrutura do Governo do RS</title>
+  <meta name="color-scheme" content="light dark">
+  <style>
+    :root{
+      --rs-green:#1FA54C; --rs-yellow:#FFC107; --rs-red:#C62828;
+      --ink:#0B1020; --muted:#5b6b86; --card:#ffffff;
+      --bg:linear-gradient(135deg, rgba(31,165,76,.18), rgba(255,193,7,.18) 40%, rgba(198,40,40,.18));
+      --border:#e7eef7; --ring:rgba(31,165,76,.35); --shadow:0 18px 60px rgba(11,16,32,.18);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0; background:radial-gradient(1600px 900px at 50% -20%,rgba(255,255,255,.8),transparent 70%), var(--bg); font:16px/1.4 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Noto Sans",sans-serif; color:var(--ink)}
+    .app{min-height:100%; display:grid; place-items:center; padding:28px}
+    .card{width:100%; max-width:440px; background:var(--card); border:1px solid var(--border); border-radius:22px; box-shadow:var(--shadow); overflow:hidden}
+    .brand{display:grid; place-items:center; padding:24px 24px 8px}
+    .brand img{width:min(520px,92%); height:auto; filter: drop-shadow(0 8px 18px rgba(11,16,32,.18));}
+    .title{padding:0 22px 8px; text-align:center;}
+    .title h1{margin:0; font-size:22px; letter-spacing:.2px}
+    .title p{margin:6px 0 0; color:var(--muted); font-size:14px}
+    form{padding:18px 22px 22px; display:grid; gap:12px}
+    label{font-size:13px; color:#394a6b}
+    .input{display:flex; align-items:center; gap:8px; padding:12px 12px; border:1px solid var(--border); border-radius:12px; background:#fff}
+    .input input{border:0; outline:0; flex:1; font:inherit; background:transparent}
+    .input:focus-within{box-shadow:0 0 0 4px var(--ring); border-color:#b7e3c8}
+    .row{display:flex; align-items:center; justify-content:space-between; gap:8px}
+    .row .remember{display:flex; align-items:center; gap:8px; font-size:14px; color:#3b4b6c}
+    .btn{cursor:pointer; border:0; padding:12px 16px; border-radius:12px; font-weight:600; box-shadow:0 6px 16px rgba(31,165,76,.28)}
+    .btn-primary{background:linear-gradient(180deg, #22b357, var(--rs-green)); color:#fff}
+    .btn-primary[disabled]{opacity:.6; cursor:not-allowed; box-shadow:none}
+    .btn-ghost{background:transparent; color:#2b3a57}
+    .danger{color:var(--rs-red)}
+    .note{font-size:13px; color:var(--muted); text-align:center}
+    .footer{padding:10px 18px 18px; text-align:center; color:#7282a0; font-size:12px}
+    @media (prefers-color-scheme: dark){
+      :root{ --card:#0e1424; --border:#1b2740; --ink:#eaf0fb; --muted:#98a7c2; --ring:rgba(255,193,7,.35)}
+      body{ background:radial-gradient(1600px 900px at 50% -20%,rgba(255,255,255,.05),transparent 70%), linear-gradient(135deg, rgba(31,165,76,.16), rgba(255,193,7,.10) 40%, rgba(198,40,40,.10)); }
+      .input{ background:#0c1222 }
+    }
+  
+    /* ----- Acessibilidade de foco (sem "traçado" no mouse) ----- */
+    #togglePwd, #forgotBtn { outline: none; box-shadow: none; border: 0; }
+    #togglePwd:focus:not(:focus-visible), #forgotBtn:focus:not(:focus-visible) { outline: none; box-shadow: none; }
+    #togglePwd:focus-visible, #forgotBtn:focus-visible {
+      outline: none;
+      box-shadow: 0 0 0 4px var(--ring);
+      border-radius: 8px;
+    }
+
+    /* ----- Fundo bonito com as cores do RS ----- */
+    body{
+      background:
+        radial-gradient(1200px 700px at 20% -10%, rgba(255,255,255,.35), rgba(255,255,255,0) 70%),
+        radial-gradient(1000px 600px at 85% 120%, rgba(31,165,76,.20), rgba(31,165,76,0) 65%),
+        linear-gradient(145deg, rgba(31,165,76,.25) 0%, rgba(255,193,7,.18) 46%, rgba(198,40,40,.22) 100%),
+        #0a121a;
+      background-attachment: fixed;
+    }
+
+    /* Botões ghost sem borda */
+    .btn-ghost { border: 0 !important; box-shadow: none !important; background: transparent; }
+
+  
+    /* ----- Fundo claro com as cores do RS ----- */
+    body{
+      background:
+        radial-gradient(1200px 700px at 15% -10%, rgba(255,255,255,.85), rgba(255,255,255,0) 70%),
+        radial-gradient(1000px 650px at 85% 120%, rgba(31,165,76,.12), rgba(31,165,76,0) 65%),
+        linear-gradient(145deg, rgba(31,165,76,.18) 0%, rgba(255,193,7,.15) 46%, rgba(198,40,40,.18) 100%),
+        #f7fafc;
+      background-attachment: fixed;
+    }
+
+  </style>
+</head>
+<body>
+  <main class="app">
+    <section class="card" aria-labelledby="cardTitle">
+      <div class="brand" aria-hidden="true">
+        <img src="assets/logo.png" alt="Estrutura do Governo do Estado do Rio Grande do Sul" />
+      </div>
+      
+
+      <form id="loginForm" novalidate>
+        <div>
+          <label for="email">Usuário</label>
+          <div class="input">
+            <input id="email" name="email" type="text" placeholder="admin" autocomplete="username" required />
+          </div>
+        </div>
+        <div>
+          <label for="password">Senha</label>
+          <div class="input">
+            <input id="password" name="password" type="password" placeholder="••••••••" autocomplete="current-password" required />
+            <button type="button" class="btn-ghost" id="togglePwd" aria-label="Mostrar senha">👁️</button>
+          </div>
+        </div>
+
+        <div class="row">
+          <label class="remember"><input id="remember" type="checkbox"> Lembrar usuário</label>
+          <button type="button" class="btn-ghost" id="forgotBtn">Esqueci a senha</button>
+        </div>
+
+        <button class="btn btn-primary" id="submitBtn" type="submit">Entrar</button>
+        <div id="error" class="danger" role="alert" style="min-height:1.2em"></div>
+
+        
+      </form>
+
+      <div class="footer">&copy; <span id="year"></span> Feito por: Lucas Hartmann & Gabriel Correa •</div>
+    </section>
+  </main>
+
+  <script>
+    // SINGLE-USER STATIC AUTH (GitHub Pages)
+    const AUTH = {
+      username: 'admin',
+      // senha padrão: organors!2025  (altere imediatamente)
+      salt_b64: 'Zni1qvAf5ssm/JPh0ncofQ==',
+      hash_b64: '1Eks7M21rwXpQWgttu8OVDbodLiAh8gGEGQgU9Ixrwk=',
+      iterations: 210000,
+      dklen: 32
+    };
+    const REDIRECT_AFTER_LOGIN = 'organograma.html';
+
+    // Helper para criar novo hash
+    window.generatePassword = async function(newPassword){
+      const salt = crypto.getRandomValues(new Uint8Array(16));
+      const salt_b64 = btoa(String.fromCharCode(...salt));
+      const hash_b64 = await derivePBKDF2(newPassword, salt_b64, AUTH.iterations, AUTH.dklen);
+      console.log('%cCole no AUTH:', 'color:#1FA54C; font-weight:bold');
+      console.log({ username: AUTH.username, salt_b64, hash_b64, iterations: AUTH.iterations, dklen: AUTH.dklen });
+      return { salt_b64, hash_b64 };
+    }
+
+    const byId = (id) => document.getElementById(id);
+    const emailEl = byId('email');
+    const pwdEl = byId('password');
+    const rememberEl = byId('remember');
+    const errorEl = byId('error');
+    const submitBtn = byId('submitBtn');
+    const forgotBtn = byId('forgotBtn');
+    const togglePwd = byId('togglePwd');
+    byId('year').textContent = new Date().getFullYear();
+
+    // Lembrar usuário
+    const savedUser = localStorage.getItem('orgRS_user');
+    if(savedUser){ emailEl.value = savedUser; rememberEl.checked = true; }
+    togglePwd.addEventListener('click', ()=>{
+      const t = pwdEl.getAttribute('type') === 'password' ? 'text' : 'password';
+      pwdEl.setAttribute('type', t);
+    });
+    function setLoading(state){ submitBtn.disabled = state; submitBtn.textContent = state ? 'Entrando…' : 'Entrar'; }
+    function showError(msg){ errorEl.textContent = msg || ''; }
+    function grantSession(user){ sessionStorage.setItem('orgRS_auth', JSON.stringify({user, ts:Date.now()})); }
+    function goApp(){ window.location.href = REDIRECT_AFTER_LOGIN; }
+
+    async function derivePBKDF2(password, salt_b64, iterations, dklen){
+      const enc = new TextEncoder();
+      const keyMaterial = await crypto.subtle.importKey('raw', enc.encode(password), 'PBKDF2', false, ['deriveBits']);
+      const salt = Uint8Array.from(atob(salt_b64), c => c.charCodeAt(0));
+      const bits = await crypto.subtle.deriveBits({name:'PBKDF2', hash:'SHA-256', salt, iterations}, keyMaterial, dklen*8);
+      return btoa(String.fromCharCode(...new Uint8Array(bits)));
+    }
+    function timingSafeEqual(a,b){
+      if(a.length !== b.length) return false;
+      let out = 0; for(let i=0;i<a.length;i++){ out |= a.charCodeAt(i) ^ b.charCodeAt(i); } return out===0;
+    }
+
+    document.getElementById('loginForm').addEventListener('submit', async (e)=>{
+      e.preventDefault(); showError(''); setLoading(true);
+      const user = emailEl.value.trim();
+      const pass = pwdEl.value;
+      if(rememberEl.checked) localStorage.setItem('orgRS_user', user); else localStorage.removeItem('orgRS_user');
+      try{
+        if(user !== AUTH.username){ showError('Usuário inválido.'); setLoading(false); return; }
+        const candidate = await derivePBKDF2(pass, AUTH.salt_b64, AUTH.iterations, AUTH.dklen);
+        if(timingSafeEqual(candidate, AUTH.hash_b64)){ grantSession(user); goApp(); }
+        else { showError('Senha incorreta.'); }
+      }catch(err){ showError('Não foi possível entrar.'); }
+      finally{ setLoading(false); }
+    });
+
+    forgotBtn.addEventListener('click', ()=>{ showError('Contate o administrador para redefinir a senha.'); });
+  </script>
+</body>
+</html>

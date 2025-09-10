@@ -1,0 +1,537 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Organograma RS – Explorer</title>
+  <style>
+    :root{
+      --bg:#0b0f14; --card:#111826; --muted:#91a1b3; --text:#e9f0f8; --accent:#60a5fa; --accent-2:#34d399; --danger:#ef4444;
+      --border:#1f2a37; --shadow:0 10px 30px rgba(0,0,0,.35);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0;background:linear-gradient(180deg,#0b0f14,#0e1420 35%,#0b0f14);color:var(--text);font:15px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,"Noto Sans",sans-serif}
+    .app{display:grid;grid-template-columns: 320px 1fr; gap:18px; height:100%; padding:18px}
+    .panel{background:var(--card); border:1px solid var(--border); border-radius:16px; box-shadow:var(--shadow)}
+    .left{padding:14px; display:flex; flex-direction:column; gap:12px}
+    .right{padding:0; display:flex; flex-direction:column}
+    .toolbar{display:flex; gap:8px; padding:12px 14px; border-bottom:1px solid var(--border); align-items:center}
+    .toolbar h1{font-size:16px; margin:0; font-weight:600; letter-spacing:.2px}
+    .toolbar .pill{margin-left:auto; font-size:12px; color:var(--muted)}
+    label{font-size:12px; color:var(--muted)}
+    input[type="text"], textarea, select{width:100%; background:#0c121b; border:1px solid var(--border); color:var(--text); border-radius:12px; padding:10px 12px; outline:none}
+    input[type="text"]:focus, textarea:focus{border-color:#2b3b52; box-shadow:0 0 0 3px rgba(96,165,250,.15)}
+    textarea{min-height:120px; resize:vertical}
+    .controls{display:grid; grid-template-columns: 1fr; gap:10px}
+    .row{display:flex; gap:8px; flex-wrap:wrap}
+    button{background:#101827; color:var(--text); border:1px solid var(--border); border-radius:12px; padding:9px 12px; cursor:pointer}
+    button:hover{background:#0d1624}
+    .btn-accent{border-color:#33507a; background:linear-gradient(180deg,#13253a,#0f1d31)}
+    .btn-green{border-color:#265e52; background:linear-gradient(180deg,#113d34,#0d2f28)}
+    .btn-danger{border-color:#5a1f24; background:linear-gradient(180deg,#3a1216,#2a0d10)}
+    .hint{font-size:12px; color:var(--muted)}
+    .tree-wrap{position:relative; overflow:auto; height:100%}
+    .tree{padding:12px 18px}
+    .tree ul{list-style:none; margin:0; padding-left:18px; border-left:1px dashed #2a3648}
+    .tree li{margin:4px 0; position:relative}
+    .node{display:flex; align-items:center; gap:8px; padding:6px 8px; border-radius:10px; cursor:pointer}
+    .node:hover{background:#0e1622}
+    .node.active{background:rgba(96,165,250,.14); outline:1px solid rgba(96,165,250,.25)}
+    .toggle{width:18px; height:18px; display:grid; place-items:center; border-radius:6px; border:1px solid #2a3a55; background:#0d1521; font-size:12px; user-select:none}
+    .toggle.leaf{opacity:.35}
+    .type{font-size:11px; padding:2px 6px; border:1px solid #233245; border-radius:999px; color:#b6c4d6}
+    .badge{font-size:11px; padding:2px 6px; border:1px solid #233245; border-radius:999px; color:#b6c4d6}
+    .name{font-weight:500}
+    .muted{color:var(--muted)}
+    .highlight{background:rgba(52,211,153,.2); box-shadow:0 0 0 2px rgba(52,211,153,.25) inset; border-radius:6px}
+    .header{display:flex; align-items:center; gap:10px; padding:12px 14px}
+    .search{flex:1}
+    .chips{display:flex; gap:6px; flex-wrap:wrap}
+    .chip{font-size:12px; border:1px solid var(--border); border-radius:999px; padding:6px 8px; color:var(--muted)}
+    .breadcrumbs{padding:10px 14px; border-top:1px solid var(--border); color:var(--muted); font-size:13px}
+    .breadcrumbs a{color:var(--accent)}
+    .footer{margin-top:auto; padding:12px 14px; border-top:1px dashed var(--border); color:var(--muted); font-size:12px}
+    .split{display:grid; grid-template-columns: 1fr 1fr; gap:12px}
+    .filters{display:flex; flex-wrap:wrap; gap:6px}
+    .filters label{display:flex; gap:6px; align-items:center; background:#0c121b; padding:6px 8px; border-radius:10px; border:1px solid var(--border)}
+    .empty{color:var(--muted); padding:28px; text-align:center}
+    @media (max-width: 980px){
+      .app{grid-template-columns:1fr; height:auto}
+      .right{min-height:60vh}
+    }
+    @media print{
+      .left{display:none}
+      .toolbar,.header,.breadcrumbs,.footer{display:none}
+      .tree ul{border-left:none}
+      .node{background:none}
+    }
+  </style>
+  <script>
+    // Guard simples de sessão
+    if (!sessionStorage.getItem('orgRS_auth')) { location.href = 'index.html'; }
+  </script>
+</head>
+<body>
+  <div class="app">
+    <aside class="panel left">
+      <div class="toolbar">
+        <h1>Dados & Importação</h1>
+        <span class="pill" id="stats-pill">0 itens</span>
+      </div>
+
+      <div class="controls">
+        <div>
+          <label for="import-text">Cole seu texto (uma linha por caminho). Formatos aceitos:</label>
+          <div class="hint">• "Secretaria da Saúde > Hospitais > Hospital São Pedro (hospital)"<br>• ou com indentação por espaços/tabs:<br>
+<pre style="margin:8px 0 0; white-space:pre-wrap; font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace; background:#0c121b; border:1px solid var(--border); border-radius:10px; padding:8px; color:#9fb2c7">Governo do Estado do RS
+  Secretaria da Saúde (secretaria)
+    Hospitais
+      Hospital São Pedro (hospital)</pre>
+          </div>
+          <textarea id="import-text" placeholder="Cole aqui seus caminhos (um por linha) – você pode enviar o bruto e clicar em 'Gerar/Atualizar Árvore'."></textarea>
+        </div>
+        <div class="row">
+          <button class="btn-accent" id="btn-build">Gerar/Atualizar Árvore</button>
+          <button id="btn-sample">Carregar Exemplo</button>
+          <button class="btn-green" id="btn-export">Exportar JSON</button>
+          <button class="btn-danger" id="btn-clear">Limpar</button>
+        </div>
+        <div class="split">
+          <div>
+            <label for="root-name">Nome do topo</label>
+            <input id="root-name" type="text" value="Governo do Estado do RS"/>
+          </div>
+          <div>
+            <label for="type-guess">Tentar detectar tipo</label>
+            <select id="type-guess">
+              <option value="paren" selected>Entre parênteses (ex: (secretaria))</option>
+              <option value="none">Não detectar</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label>Filtros rápidos de tipo</label>
+          <div class="filters" id="type-filters"></div>
+        </div>
+        <div class="hint">Dica: você pode usar o hash da URL como link direto para qualquer item. Clique em um nó e copie a URL.</div>
+      </div>
+
+      <div class="footer">
+        Feito em HTML + CSS + JS puro. Imprima (Ctrl/Cmd+P) para uma versão expandida.
+      </div>
+    </aside>
+
+    <section class="panel right">
+      <div class="header">
+        <div class="search">
+          <input id="search" type="text" placeholder="Buscar por nome… (Enter para focar, ESC para limpar)" autocomplete="off" />
+        </div>
+        <div class="chips">
+          <button id="expand-all">Expandir tudo</button>
+          <button id="collapse-all">Recolher tudo</button>
+          <span class="chip" id="match-count">0 correspondências</span>
+        </div>
+      </div>
+      <div class="tree-wrap" id="tree-wrap">
+        <div class="tree" id="tree"></div>
+        <div class="empty" id="empty">Cole seus dados à esquerda e clique em <em>Gerar/Atualizar Árvore</em>.</div>
+      </div>
+      <div class="breadcrumbs" id="breadcrumbs">Nenhum item selecionado.</div>
+    </section>
+  </div>
+
+<script>
+(() => {
+  const el = sel => document.querySelector(sel);
+  const els = sel => Array.from(document.querySelectorAll(sel));
+  const treeEl = el('#tree');
+  const emptyEl = el('#empty');
+  const statsPill = el('#stats-pill');
+  const breadcrumbsEl = el('#breadcrumbs');
+  const searchInput = el('#search');
+  const filtersWrap = el('#type-filters');
+  const knownTypes = [
+    'secretaria','órgão','orgao','diretoria','departamento','divisão','divisao','superintendência','superintendencia','agência','agencia','fundação','fundacao','autarquia','empresa pública','empresa publica','instituto','museu','parque','conselho','colegiado','gabinete','coordenação','coordenacao','comitê','comite','universidade','câmara','camara'
+  ];
+
+  let root = null;
+  let idIndex = new Map();
+  let typeSet = new Set();
+
+  const slug = (s) => s
+    .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+    .toLowerCase()
+    .replace(/[^a-z0-9\s\/-]+/g,'')
+    .replace(/\s+/g,'-')
+    .replace(/-+/g,'-')
+    .replace(/^-|-$|\/-\//g,'');
+
+  function makeId(pathArr){
+    return pathArr.map(slug).join('/');
+  }
+
+  function parseTypeFromToken(name){
+    const m = name.match(/\(([^)]+)\)\s*$/i);
+    if(!m) return {name: name.trim(), type: null};
+    const typeRaw = m[1].trim();
+    const tClean = typeRaw
+      .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+      .toLowerCase();
+    const isKnown = knownTypes.some(k => tClean === k
+      .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+      .toLowerCase());
+    return { name: name.replace(/\([^)]+\)\s*$/,'').trim(), type: isKnown ? typeRaw.toLowerCase() : null };
+  }
+
+  function buildFromOutline(text, opts){
+    const lines = text.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+    const paths = [];
+    const useArrow = lines.some(l => l.includes('>'));
+    if(useArrow){
+      for(const line of lines){
+        const parts = line.split('>').map(x=>x.trim()).filter(Boolean);
+        if(parts.length){ paths.push(parts); }
+      }
+    } else {
+      const stack = [];
+      for(const raw of text.split(/\r?\n/)){
+        if(!raw.trim()) continue;
+        const indent = raw.match(/^[\t ]*/)[0].replace(/\t/g,'  ').length;
+        const depth = Math.floor(indent/2);
+        const name = raw.trim();
+        while(stack.length>depth) stack.pop();
+        stack[depth] = name;
+        paths.push(stack.slice(0, depth+1));
+      }
+    }
+
+    const rootName = el('#root-name').value.trim() || 'Topo';
+    const rootNode = { name: rootName, type:null, children:[], id: slug(rootName) };
+    idIndex = new Map();
+    idIndex.set(rootNode.id, rootNode);
+    const detectMode = el('#type-guess').value;
+
+    for(const path of paths){
+      let parent = rootNode;
+      const currentPath = [rootName];
+      for(let i=0;i<path.length;i++){
+        let label = path[i];
+        let type = null;
+        if(detectMode==='paren'){
+          const t = parseTypeFromToken(label);
+          label = t.name; type = t.type;
+        }
+        currentPath.push(label);
+        const id = makeId(currentPath);
+        if(!parent.children) parent.children = [];
+        let child = parent.children.find(c => slug(c.name) === slug(label));
+        if(!child){
+          child = { name: label, type, children: [], id };
+          parent.children.push(child);
+          idIndex.set(id, child);
+        } else {
+          if(type && !child.type) child.type = type;
+        }
+        parent = child;
+      }
+    }
+    return rootNode;
+  }
+
+  function renderTree(rootNode){
+    typeSet = new Set();
+    (function walk(n){
+      if(n.type) typeSet.add(n.type);
+      (n.children||[]).forEach(walk);
+    })(rootNode);
+    renderTypeFilters();
+
+    const ul = document.createElement('ul');
+    function nodeRow(n, depth=0){
+      const li = document.createElement('li');
+      const row = document.createElement('div');
+      row.className = 'node';
+      row.dataset.id = n.id;
+
+      const hasChildren = (n.children && n.children.length);
+      const toggle = document.createElement('div');
+      toggle.className = 'toggle' + (hasChildren? '': ' leaf');
+      toggle.textContent = hasChildren? '▸': '·';
+      li.appendChild(toggle);
+
+      const name = document.createElement('span');
+      name.className = 'name';
+      name.textContent = n.name;
+
+      const type = document.createElement('span');
+      type.className = 'type';
+      type.textContent = n.type || '—';
+      if(!n.type) type.style.opacity=.45;
+
+      row.appendChild(name);
+      row.appendChild(type);
+      li.appendChild(row);
+
+      if(hasChildren){
+        const childUl = document.createElement('ul');
+        childUl.style.display = 'none';
+        for(const c of n.children.sort((a,b)=> a.name.localeCompare(b.name,'pt',{sensitivity:'base'}))){
+          childUl.appendChild(nodeRow(c, depth+1));
+        }
+        li.appendChild(childUl);
+      }
+
+      row.addEventListener('click', (e)=>{
+        selectNode(n.id);
+        const cu = li.querySelector(':scope > ul');
+        if(cu){
+          const isOpen = cu.style.display !== 'none';
+          cu.style.display = isOpen ? 'none' : 'block';
+          li.querySelector(':scope > .toggle').textContent = isOpen? '▸':'▾';
+        }
+        location.hash = '#' + n.id;
+      });
+
+      li.querySelector(':scope > .toggle').addEventListener('click', (e)=>{
+        e.stopPropagation();
+        const cu = li.querySelector(':scope > ul');
+        if(!cu) return;
+        const isOpen = cu.style.display !== 'none';
+        cu.style.display = isOpen ? 'none' : 'block';
+        li.querySelector(':scope > .toggle').textContent = isOpen? '▸':'▾';
+      });
+
+      return li;
+    }
+
+    ul.appendChild(nodeRow(rootNode));
+    treeEl.innerHTML = '';
+    treeEl.appendChild(ul);
+
+    const firstChildrenUl = treeEl.querySelector('li > ul');
+    if(firstChildrenUl){ firstChildrenUl.style.display = 'block';
+      const t = treeEl.querySelector('li > .toggle'); if(t) t.textContent = '▾';
+    }
+
+    emptyEl.style.display = 'none';
+    statsPill.textContent = countNodes(rootNode) + ' itens';
+  }
+
+  function countNodes(n){
+    let c = 1;
+    (n.children||[]).forEach(ch => c += countNodes(ch));
+    return c;
+  }
+
+  function renderTypeFilters(){
+    filtersWrap.innerHTML = '';
+    const types = Array.from(typeSet).sort((a,b)=> a.localeCompare(b,'pt',{sensitivity:'base'}));
+    if(!types.length){
+      const span = document.createElement('span');
+      span.className = 'hint'; span.textContent = 'Nenhum tipo detectado (ex.: use "(secretaria)" no final de cada linha)';
+      filtersWrap.appendChild(span);
+      return;
+    }
+    for(const t of types){
+      const id = 't-' + slug(t);
+      const label = document.createElement('label');
+      const cb = document.createElement('input'); cb.type='checkbox'; cb.id=id; cb.checked=true; cb.dataset.type=t;
+      const txt = document.createElement('span'); txt.textContent = t;
+      label.appendChild(cb); label.appendChild(txt);
+      filtersWrap.appendChild(label);
+      cb.addEventListener('change', applyFiltersAndSearch);
+    }
+  }
+
+  function applyFiltersAndSearch(){
+    const q = searchInput.value.trim();
+    const activeTypes = new Set(els('#type-filters input[type="checkbox"]').filter(c=>c.checked).map(c=>c.dataset.type));
+
+    let matches = 0;
+    const qNorm = normalize(q);
+
+    function walk(li){
+      const row = li.querySelector(':scope > .node');
+      const id = row?.dataset.id;
+      const node = idIndex.get(id);
+      const hasChildren = !!li.querySelector(':scope > ul');
+
+      const typeOk = !node?.type || activeTypes.has(node.type);
+
+      const nameSpan = row?.querySelector('.name');
+      if(nameSpan){
+        const nameText = nameSpan.textContent;
+        const hit = q ? normalize(nameText).includes(qNorm) : true;
+        nameSpan.innerHTML = q ? highlight(nameText, q) : escapeHtml(nameText);
+        if(hit && typeOk) matches++;
+        li.dataset._hit = hit && typeOk ? '1' : '0';
+      }
+
+      const childUl = li.querySelector(':scope > ul');
+      let anyChildVisible = false;
+      if(childUl){
+        childUl.querySelectorAll(':scope > li').forEach(ch => {
+          walk(ch); if(ch.style.display!=='none') anyChildVisible=true;
+        });
+      }
+
+      const visible = (li.dataset._hit==='1') || anyChildVisible;
+      li.style.display = visible ? '' : 'none';
+
+      if(visible && childUl && anyChildVisible){
+        childUl.style.display='block';
+        li.querySelector(':scope > .toggle').textContent = '▾';
+      }
+    }
+
+    treeEl.querySelectorAll('ul > li').forEach(li => walk(li));
+    document.getElementById('match-count').textContent = matches + ' correspondência' + (matches===1?'':'s');
+  }
+
+  function highlight(text, q){
+    const idx = normalize(text).indexOf(normalize(q));
+    if(idx===-1) return escapeHtml(text);
+    const end = idx + q.length;
+    const before = escapeHtml(text.slice(0, idx));
+    const mid = escapeHtml(text.slice(idx, end));
+    const after = escapeHtml(text.slice(end));
+    return `${before}<span class="highlight">${mid}</span>${after}`;
+  }
+
+  function escapeHtml(s){
+    return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[c]));
+  }
+
+  function normalize(s){
+    return (s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+  }
+
+  function selectNode(id){
+    els('.node').forEach(n => n.classList.remove('active'));
+    const row = els(`.node[data-id="${CSS.escape(id)}"]`)[0];
+    if(row){ row.classList.add('active'); showBreadcrumbs(id); }
+  }
+
+  function showBreadcrumbs(id){
+    const parts = id.split('/');
+    let path = [];
+    const frag = [];
+    for(const p of parts){
+      path.push(p);
+      const pid = path.join('/');
+      const node = idIndex.get(pid);
+      if(!node) continue;
+      frag.push(`<a href="#${pid}">${escapeHtml(node.name)}</a>`);
+    }
+    breadcrumbsEl.innerHTML = frag.join(' ▸ ');
+  }
+
+  function openByHash(){
+    if(!location.hash) return;
+    const id = location.hash.slice(1);
+    if(!idIndex.has(id)) return;
+    const parts = id.split('/');
+    let path = [];
+    for(let i=0;i<parts.length-1;i++){
+      path.push(parts[i]);
+      const pid = path.join('/');
+      const li = document.querySelector(`.node[data-id="${CSS.escape(pid)}"]`)?.parentElement;
+      if(li){
+        const childUl = li.querySelector(':scope > ul');
+        if(childUl){ childUl.style.display = 'block'; li.querySelector(':scope > .toggle').textContent='▾'; }
+      }
+    }
+    selectNode(id);
+    const row = document.querySelector(`.node[data-id="${CSS.escape(id)}"]`);
+    const wrap = document.getElementById('tree-wrap');
+    if(row && wrap){
+      const r = row.getBoundingClientRect();
+      const w = wrap.getBoundingClientRect();
+      if(r.top < w.top || r.bottom > w.bottom){
+        wrap.scrollTop = row.offsetTop - 60;
+      }
+    }
+  }
+
+  document.getElementById('btn-build').addEventListener('click', () => {
+    const txt = document.getElementById('import-text').value.trim();
+    if(!txt){ alert('Cole seu texto primeiro.'); return; }
+    const root = buildFromOutline(txt);
+    renderTree(root);
+    applyFiltersAndSearch();
+    openByHash();
+  });
+
+  document.getElementById('btn-clear').addEventListener('click', ()=>{
+    document.getElementById('import-text').value = '';
+    treeEl.innerHTML = '';
+    emptyEl.style.display = '';
+    breadcrumbsEl.textContent = 'Nenhum item selecionado.';
+    document.getElementById('stats-pill').textContent = '0 itens';
+    filtersWrap.innerHTML = '';
+    searchInput.value=''; document.getElementById('match-count').textContent = '0 correspondências';
+  });
+
+  document.getElementById('btn-sample').addEventListener('click', ()=>{
+    const sample = `Governo do Estado do RS
+  Casa Civil (secretaria)
+    Gabinete do Secretário (gabinete)
+    Subchefia Jurídica (órgão)
+  Secretaria da Saúde (secretaria)
+    Assistência Hospitalar
+      Hospital São Pedro (hospital)
+      Hospital Sanatório Partenon (hospital)
+    Vigilância em Saúde (departamento)
+      Centro Estadual de Vigilância em Saúde (órgão)
+  Secretaria da Cultura (secretaria)
+    Museus
+      Museu de Arte do RS Ado Malagoli – MARGS (museu)
+      Museu Júlio de Castilhos (museu)
+    Fundações
+      Fundação Theatro São Pedro (fundação)
+  Secretaria do Meio Ambiente e Infraestrutura (secretaria)
+    SEMA Gabinete (gabinete)
+    Parques
+      Parque Estadual Delta do Jacuí (parque)
+      Parque Estadual de Itapuã (parque)`;
+    document.getElementById('import-text').value = sample;
+  });
+
+  document.getElementById('btn-export').addEventListener('click', ()=>{
+    const treeRoot = treeEl.querySelector('ul');
+    if(!treeRoot){ alert('Nada para exportar.'); return; }
+    // Exporta o último root gerado (salvamos no escopo com closure no buildFromOutline? Sim, retornamos root local aqui.)
+    // Solução: reconstruir a partir do texto atual, para garantir consistência:
+    const txt = document.getElementById('import-text').value.trim();
+    if(!txt){ alert('Nada para exportar.'); return; }
+    const rootNode = buildFromOutline(txt);
+    const data = JSON.stringify(rootNode, null, 2);
+    const blob = new Blob([data], {type:'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'organograma-rs.json'; a.click();
+    URL.revokeObjectURL(url);
+  });
+
+  document.getElementById('expand-all').addEventListener('click', ()=>{
+    document.querySelectorAll('li > ul').forEach(u=>{u.style.display='block'});
+    document.querySelectorAll('li > .toggle').forEach(t=>{ if(t && !t.classList.contains('leaf')) t.textContent='▾'; });
+  });
+  document.getElementById('collapse-all').addEventListener('click', ()=>{
+    document.querySelectorAll('li > ul').forEach(u=>{u.style.display='none'});
+    document.querySelectorAll('li > .toggle').forEach(t=>{ if(t && !t.classList.contains('leaf')) t.textContent='▸'; });
+    const first = document.querySelector('li > ul'); if(first){ first.style.display='block'; const t = document.querySelector('li > .toggle'); if(t) t.textContent='▾'; }
+  });
+
+  searchInput.addEventListener('input', applyFiltersAndSearch);
+  document.addEventListener('keydown', (e)=>{
+    if(e.key==='Enter' && document.activeElement!==searchInput){ searchInput.focus(); e.preventDefault(); }
+    if(e.key==='Escape'){ searchInput.value=''; applyFiltersAndSearch(); }
+  });
+
+  window.addEventListener('hashchange', openByHash);
+})();
+</script>
+</body>
+</html>
