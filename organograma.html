@@ -7,7 +7,7 @@
   <meta name="color-scheme" content="light">
   <style>
     :root{
-      --green:#1FA54C; --yellow:#FFC107; --red:#C62828;
+      --green:#1FA54C; --yellow:#FFC107; --#9ca3af:#C62828;
       --ink:#0B1020; --muted:#5b6b86; --muted-2:#8a96ad;
       --border:#e5edf7; --card:#ffffff; --bg:#f9fbfe;
       --ring:rgba(31,165,76,.28);
@@ -24,7 +24,7 @@
         var(--bg);
       background-attachment: fixed;
     }
-    .stripe{height:5px; background:linear-gradient(90deg, var(--green), var(--yellow), var(--red));}
+    .stripe{height:5px; background:linear-gradient(90deg, var(--green), var(--yellow), var(--#9ca3af));}
     .topbar{position:sticky; top:0; z-index:20; display:flex; align-items:center; gap:14px; padding:12px 16px; background:#ffffffd9; backdrop-filter: blur(8px); border-bottom:1px solid var(--border);}
     .topbar img{height:44px}
     .topbar .title{font-weight:800; letter-spacing:.2px}
@@ -45,7 +45,7 @@
     @media (max-width:1100px){ .grid{grid-template-columns:repeat(2,1fr)} }
     @media (max-width:700px){ .grid{grid-template-columns:1fr} }
     .card.s{position:relative; background:var(--card); border:1px solid var(--border); border-radius:16px; overflow:hidden; box-shadow:var(--shadow)}
-    .band{height:6px; background:linear-gradient(90deg, var(--green), var(--yellow), var(--red));}
+    .band{height:6px; background:linear-gradient(90deg, var(--green), var(--yellow), var(--#9ca3af));}
     .body{padding:14px}
     h3{margin:4px 0 8px; font-size:16px; line-height:1.35}
     .tags{display:flex; gap:6px; flex-wrap:wrap}
@@ -55,6 +55,14 @@
     .s:hover{transform:translateY(-2px); transition:.18s ease; box-shadow:0 16px 34px rgba(11,16,32,.12)}
     .s:focus-within{outline:none; box-shadow:0 0 0 4px rgba(31,165,76,.28)}
   .hero .right img{max-height:160px; width:auto; display:block; filter: drop-shadow(0 6px 16px rgba(11,16,32,.10));}
+
+/* === SOCIALS (home/cards) === */
+.card .socials-row{display:flex;gap:10px;align-items:center;margin-top:12px;padding-top:10px;border-top:1px dashed rgba(11,16,32,.08)}
+.card .socials-row a{width:32px;height:32px;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;text-decoration:none;color:#6b7280;background:#ffffff;box-shadow:inset 0 0 0 1px rgba(11,16,32,.06);transition:transform .15s ease, box-shadow .15s ease, color .15s ease}
+.card .socials-row a:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(11,16,32,.12);color:#118b45}
+.card .socials-row a.disabled{opacity:.45;pointer-events:none;filter:grayscale(1)}
+.card .socials-row svg{width:18px;height:18px}
+
 </style>
   <script>
     if (!sessionStorage.getItem('orgRS_auth')) {
@@ -144,6 +152,61 @@
     <div style="height:4px;background:linear-gradient(90deg,#1FA54C,#FFC107,#C62828);border-radius:999px;margin-bottom:14px;"></div>
     <div style="text-align:center;">© 2025 Feito por: Lucas Hartmann &amp; Gabriel Correa •</div>
   </footer>
+
+
+<!-- SOCIALS-BEGIN: home -->
+<script>
+(function(){
+  window.SOCIALS = window.SOCIALS || {};
+  function svgIcon(name){
+    const icons = {
+      facebook: `<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M13.5 9H16V6h-2.5C11.6 6 10 7.6 10 9.5V11H8v3h2v7h3v-7h2.1l.9-3H13v-1.5c0-.3.2-.5.5-.5Z"/></svg>`,
+      instagram: `<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10Zm0 8a3 3 0 1 1 0-6 3 3 0 0 1 0 6Zm5.5-8.9a1.1 1.1 0 1 0 0-2.2 1.1 1.1 0 0 0 0 2.2ZM17 3H7a4 4 0 0 0-4 4v10a4 4 0 0 0 4 4h10a4 4 0 0 0 4-4V7a4 4 0 0 0-4-4Zm2 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v10Z"/></svg>`,
+      youtube: `<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M21.6 7.2a3 3 0 0 0-2.1-2.1C18 4.7 12 4.7 12 4.7s-6 0-7.5.4a3 3 0 0 0-2.1 2.1C2 8.7 2 12 2 12s0 3.3.4 4.8a3 3 0 0 0 2.1 2.1c1.5.4 7.5.4 7.5.4s6 0 7.5-.4a3 3 0 0 0 2.1-2.1c.4-1.5.4-4.8.4-4.8s0-3.3-.4-4.8ZM10 15.5v-7l6 3.5-6 3.5Z"/></svg>`,
+      x: `<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 3h4.7l4.7 6.6L18.9 3H21l-6.7 7.6L21 21h-4.7l-5-7-5.5 7H3l7-8-7-10Z"/></svg>`
+    };
+    return icons[name] || '';
+  }
+  function addSocialsToCard(card, slug){
+    if(!slug || card.querySelector('.socials-row')) return;
+    const row = document.createElement('div');
+    row.className = 'socials-row';
+    ['facebook','instagram','youtube','x'].forEach(p => {
+      const href = (window.SOCIALS[slug] && window.SOCIALS[slug][p]) || '';
+      const a = document.createElement('a');
+      a.className = href ? p : 'disabled';
+      a.href = href || '#';
+      if(href){ a.target = '_blank'; a.rel = 'noopener'; }
+      a.setAttribute('aria-label', href ? p : (p+' não cadastrado'));
+      a.title = href ? p : 'Sem cadastro ainda';
+      a.innerHTML = svgIcon(p);
+      row.appendChild(a);
+    });
+    card.appendChild(row);
+  }
+  function getSlugFromHref(h){
+    try{ return new URL(h, location.href).searchParams.get('slug') || ''; }catch(e){ return ''; }
+  }
+  function scan(){
+    document.querySelectorAll('a[href*="secretaria.html"]').forEach(a=>{
+      const slug = getSlugFromHref(a.getAttribute('href'));
+      const card = a.closest('.card') || a.parentElement || null;
+      if(card) addSocialsToCard(card, slug);
+    });
+  }
+  document.addEventListener('DOMContentLoaded', scan);
+  window.addEventListener('load', scan);
+  new MutationObserver(scan).observe(document.documentElement, {subtree:true, childList:true});
+})();
+</script>
+<!-- SOCIALS-END: home -->
+
+
+<!-- SOCIALS-MAP: IRGA/SEAPI -->
+<script>
+window.SOCIALS = window.SOCIALS || {};
+window.SOCIALS["secretaria-da-agricultura-pecuaria-producao-sustentavel-e-irrigacao"] = Object.assign({}, window.SOCIALS["secretaria-da-agricultura-pecuaria-producao-sustentavel-e-irrigacao"] || {}, {"instagram":"https://www.instagram.com/irgars/?hl=en"});
+</script>
 
 </body>
 </html>

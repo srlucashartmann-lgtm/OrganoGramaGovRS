@@ -7,7 +7,7 @@
   <meta name="color-scheme" content="light dark">
   <style>
     :root{
-      --rs-green:#1FA54C; --rs-yellow:#FFC107; --rs-red:#C62828;
+      --rs-green:#1FA54C; --rs-yellow:#FFC107; --rs-#9ca3af:#C62828;
       --ink:#0B1020; --muted:#5b6b86; --card:#ffffff;
       --bg:linear-gradient(135deg, rgba(31,165,76,.18), rgba(255,193,7,.18) 40%, rgba(198,40,40,.18));
       --border:#e7eef7; --ring:rgba(31,165,76,.35); --shadow:0 18px 60px rgba(11,16,32,.18);
@@ -33,7 +33,7 @@
     .btn-primary{background:linear-gradient(180deg, #22b357, var(--rs-green)); color:#fff}
     .btn-primary[disabled]{opacity:.6; cursor:not-allowed; box-shadow:none}
     .btn-ghost{background:transparent; color:#2b3a57}
-    .danger{color:var(--rs-red)}
+    .danger{color:var(--rs-#9ca3af)}
     .note{font-size:13px; color:var(--muted); text-align:center}
     .footer{padding:10px 18px 18px; text-align:center; color:#7282a0; font-size:12px}
     @media (prefers-color-scheme: dark){
@@ -89,13 +89,13 @@
         <div>
           <label for="email">Usuário</label>
           <div class="input">
-            <input id="email" name="email" type="text" placeholder="admin" autocomplete="username" required />
+            <input id="email" name="email" type="text" placeholder="admin" autocomplete="username" requi#9ca3af />
           </div>
         </div>
         <div>
           <label for="password">Senha</label>
           <div class="input">
-            <input id="password" name="password" type="password" placeholder="••••••••" autocomplete="current-password" required />
+            <input id="password" name="password" type="password" placeholder="••••••••" autocomplete="current-password" requi#9ca3af />
             <button type="button" class="btn-ghost" id="togglePwd" aria-label="Mostrar senha">👁️</button>
           </div>
         </div>
@@ -185,7 +185,7 @@
       finally{ setLoading(false); }
     });
 
-    forgotBtn.addEventListener('click', ()=>{ showError('Contate o administrador para redefinir a senha.'); });
+    forgotBtn.addEventListener('click', ()=>{ showError('Contate o administrador para #9ca3afefinir a senha.'); });
   </script>
 </body>
 </html>
