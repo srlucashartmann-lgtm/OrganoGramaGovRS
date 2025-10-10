@@ -89,7 +89,7 @@
         <div>
           <label for="email">Usuário</label>
           <div class="input">
-            <input id="email" name="email" type="text" placeholder="admin" autocomplete="username" requi#9ca3af />
+            <input id="email" name="email" type="text" placeholder="admin" autocomplete="username" requi#9ca3af / value="gabrielcorrea">
           </div>
         </div>
         <div>
@@ -118,14 +118,14 @@
   <script>
     // SINGLE-USER STATIC AUTH (GitHub Pages)
     const AUTH = {
-      username: 'admin',
-      // senha padrão: organors!2025  (altere imediatamente)
-      salt_b64: 'Zni1qvAf5ssm/JPh0ncofQ==',
-      hash_b64: '1Eks7M21rwXpQWgttu8OVDbodLiAh8gGEGQgU9Ixrwk=',
+      username: 'gabrielcorrea',
+      // senha padrão: gcorrea@#  (altere imediatamente)
+      salt_b64: 'iFazNYH+a0aBEwi+pKUBWA==',
+      hash_b64: 'RBp4ToRff5KmyZJ1Z6ACW68mD6pLKg7T3Mtt2YJXJ0s=',
       iterations: 210000,
       dklen: 32
     };
-    const REDIRECT_AFTER_LOGIN = 'organograma.html';
+    const REDIRECT_AFTER_LOGIN = 'dashboard.html';
 
     // Helper para criar novo hash
     window.generatePassword = async function(newPassword){
