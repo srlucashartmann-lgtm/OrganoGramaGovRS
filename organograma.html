@@ -5,100 +5,172 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Organograma – Secretarias (v3)</title>
   <meta name="color-scheme" content="light">
+  <link rel="stylesheet" href="assets/base.css">
   <style>
-    :root{
-      --green:#1FA54C; --yellow:#FFC107; --#9ca3af:#C62828;
-      --ink:#0B1020; --muted:#5b6b86; --muted-2:#8a96ad;
-      --border:#e5edf7; --card:#ffffff; --bg:#f9fbfe;
-      --ring:rgba(31,165,76,.28);
-      --shadow:0 14px 40px rgba(11,16,32,.10);
-    }
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0; color:var(--ink); font:16px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Noto Sans",sans-serif;
+    body{background:var(--bg)}
+    body::before{
+      content:""; position:fixed; inset:0; z-index:-1; pointer-events:none;
       background:
-        radial-gradient(1200px 700px at 10% -20%, rgba(255,255,255,.9), rgba(255,255,255,0) 70%),
-        radial-gradient(900px 600px at 85% 120%, rgba(31,165,76,.10), rgba(31,165,76,0) 60%),
-        linear-gradient(145deg, rgba(31,165,76,.15) 0%, rgba(255,193,7,.12) 45%, rgba(198,40,40,.14) 100%),
-        var(--bg);
-      background-attachment: fixed;
+        radial-gradient(1100px 520px at 0% -10%, rgba(31,165,76,.10), rgba(31,165,76,0) 70%),
+        radial-gradient(900px 480px at 100% 0%, rgba(255,193,7,.10), rgba(255,193,7,0) 70%);
     }
-    .stripe{height:5px; background:linear-gradient(90deg, var(--green), var(--yellow), var(--#9ca3af));}
-    .topbar{position:sticky; top:0; z-index:20; display:flex; align-items:center; gap:14px; padding:12px 16px; background:#ffffffd9; backdrop-filter: blur(8px); border-bottom:1px solid var(--border);}
-    .topbar img{height:44px}
-    .topbar .title{font-weight:800; letter-spacing:.2px}
-    .topbar .grow{flex:1}
-    .btn{border:1px solid var(--border); background:#fff; padding:10px 14px; border-radius:12px; cursor:pointer}
-    .btn-primary{background:linear-gradient(180deg,#22b357,#1FA54C); color:#fff; border:0}
-    .hero{max-width:1200px; margin:22px auto 0; padding:0 16px 18px}
-    .hero .card{display:grid; grid-template-columns:1.2fr .8fr; gap:10px; align-items:center; background:#fff; border:1px solid var(--border); border-radius:18px; box-shadow:var(--shadow); overflow:hidden}
-    @media (max-width:920px){ .hero .card{grid-template-columns:1fr} }
-    .hero .left{padding:18px 18px}
-    .hero h1{margin:0 0 6px; font-size:26px}
-    .hero p{margin:0; color:#5b6b86}
-    .hero .right{display:flex; gap:10px; align-items:center; justify-content:center; padding:12px}
-    .search{display:flex; gap:8px; align-items:center; background:#fff; border:1px solid var(--border); border-radius:12px; padding:10px 12px}
-    .search input{border:0; outline:0; flex:1; font:inherit; background:transparent}
-    .layout{max-width:1200px; margin:16px auto; padding:0 16px}
-    .grid{display:grid; grid-template-columns:repeat(3,1fr); gap:16px}
-    @media (max-width:1100px){ .grid{grid-template-columns:repeat(2,1fr)} }
-    @media (max-width:700px){ .grid{grid-template-columns:1fr} }
-    .card.s{position:relative; background:var(--card); border:1px solid var(--border); border-radius:16px; overflow:hidden; box-shadow:var(--shadow)}
-    .band{height:6px; background:linear-gradient(90deg, var(--green), var(--yellow), var(--#9ca3af));}
-    .body{padding:14px}
-    h3{margin:4px 0 8px; font-size:16px; line-height:1.35}
-    .tags{display:flex; gap:6px; flex-wrap:wrap}
-    .tag{font-size:12px; color:#2e3d5f; border:1px dashed var(--border); background:#f9fbff; padding:6px 8px; border-radius:999px}
-    .foot{display:flex; justify-content:space-between; align-items:center; color:#8a96ad; font-size:12px; margin-top:10px}
-    .open{color:#0a5bd3; text-decoration:none; font-weight:600}
-    .s:hover{transform:translateY(-2px); transition:.18s ease; box-shadow:0 16px 34px rgba(11,16,32,.12)}
-    .s:focus-within{outline:none; box-shadow:0 0 0 4px rgba(31,165,76,.28)}
-  .hero .right img{max-height:160px; width:auto; display:block; filter: drop-shadow(0 6px 16px rgba(11,16,32,.10));}
 
-/* === SOCIALS (home/cards) === */
-.card .socials-row{display:flex;gap:10px;align-items:center;margin-top:12px;padding-top:10px;border-top:1px dashed rgba(11,16,32,.08)}
-.card .socials-row a{width:32px;height:32px;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;text-decoration:none;color:#6b7280;background:#ffffff;box-shadow:inset 0 0 0 1px rgba(11,16,32,.06);transition:transform .15s ease, box-shadow .15s ease, color .15s ease}
-.card .socials-row a:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(11,16,32,.12);color:#118b45}
-.card .socials-row a.disabled{opacity:.45;pointer-events:none;filter:grayscale(1)}
-.card .socials-row svg{width:18px;height:18px}
+    /* ---------- Hero ---------- */
+    .hero{max-width:1200px; margin:28px auto 0; padding:0 16px}
+    .hero-card{
+      position:relative; overflow:hidden;
+      background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-xl);
+      box-shadow:var(--shadow); padding:clamp(20px,3.5vw,36px);
+    }
+    .hero-card::before{content:""; position:absolute; inset:0 0 auto 0; height:4px; background:var(--tricolor)}
+    .hero-card{display:grid; grid-template-columns:minmax(0,1fr) auto; gap:32px; align-items:center}
+    .hero-art img{display:block; max-height:170px; width:auto; filter:drop-shadow(0 6px 16px rgba(11,16,32,.08))}
+    @media (max-width:920px){ .hero-card{grid-template-columns:1fr} .hero-art{display:none} }
+    .eyebrow{display:flex; align-items:flex-start; gap:8px; margin:0 0 10px; font-size:12px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--rs-green-700)}
+    .eyebrow::before{content:""; flex-shrink:0; width:8px; height:8px; margin-top:.35em; border-radius:50%; background:var(--rs-green)}
+    .hero h1{margin:0 0 10px; font-size:clamp(26px,3.2vw,34px); font-weight:800}
+    .hero p{margin:0; max-width:68ch; color:var(--muted); font-size:15.5px; line-height:1.6}
+    .hero-search{margin-top:22px; max-width:640px}
+    .hero-search .field{min-height:52px; border-radius:14px; padding:0 14px; box-shadow:var(--shadow-sm)}
+    .hero-search .field input{font-size:16px}
+    .hero-search .field kbd{flex-shrink:0}
+    @media (hover:none){ .hero-search .field kbd{display:none} }
 
-</style>
-  
+    /* ---------- Lista ---------- */
+    .layout{max-width:1200px; margin:28px auto 0; padding:0 16px}
+    .section-head{display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin:0 2px 14px}
+    .section-head h2{margin:0; font-size:18px; font-weight:700}
+    .result-count{font-size:13px; color:var(--subtle); font-variant-numeric:tabular-nums}
+
+    .grid{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; padding:0; margin:0; list-style:none}
+    @media (max-width:1100px){ .grid{grid-template-columns:repeat(2,minmax(0,1fr))} }
+    @media (max-width:700px){ .grid{grid-template-columns:minmax(0,1fr); gap:12px} }
+    .grid > li{min-width:0}
+    @media (max-width:640px){
+      /* Topo compacto no celular: os cards aparecem mais cedo */
+      .hero{margin-top:16px}
+      .hero-card{padding:22px 18px 20px; border-radius:var(--radius-lg)}
+      .eyebrow{font-size:11px; letter-spacing:.05em; margin-bottom:8px}
+      .hero h1{font-size:24px; margin-bottom:8px}
+      .hero p{font-size:14.5px; line-height:1.55}
+      .hero-search{margin-top:16px}
+      .layout{margin-top:20px}
+    }
+
+    .card.s{
+      position:relative; display:flex; flex-direction:column; height:100%;
+      background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg);
+      box-shadow:var(--shadow-sm); padding:18px 18px 16px; overflow:hidden;
+      transition:border-color .18s var(--ease), box-shadow .18s var(--ease), transform .18s var(--ease);
+    }
+    .card.s::before{content:""; position:absolute; left:0; top:0; bottom:0; width:4px; background:var(--rs-green); transform:scaleY(0); transform-origin:top; transition:transform .2s var(--ease)}
+    .card.s:hover{border-color:var(--rs-green-100); box-shadow:var(--shadow); transform:translateY(-2px)}
+    .card.s:hover::before{transform:scaleY(1)}
+    .card.s:focus-within{box-shadow:var(--ring); border-color:var(--rs-green)}
+    .card.s:focus-within::before{transform:scaleY(1)}
+
+    .card.s h3{margin:0 0 6px; font-size:17px; line-height:1.3}
+    .org-name{display:flex; flex-direction:column; gap:2px}
+    .org-name-prefix{font-size:12px; font-weight:600; letter-spacing:.02em; color:var(--subtle)}
+    .org-name-main{font-weight:700; color:var(--ink)}
+    .card-meta{margin:0 0 12px; font-size:13px; color:var(--subtle); font-variant-numeric:tabular-nums}
+    .card-meta strong{color:var(--ink-2); font-weight:700}
+
+    .tags{display:flex; flex-wrap:wrap; gap:6px; margin:0; padding:0; list-style:none}
+    .tag{max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:12px; line-height:1.2; color:var(--muted); background:var(--surface-2); border:1px solid #edf1f6; padding:4px 8px; border-radius:6px}
+    .tag.more{color:var(--subtle); background:transparent; border-style:dashed}
+
+    .foot{display:flex; justify-content:space-between; align-items:center; gap:12px; margin-top:auto; padding-top:16px}
+    .foot .social-link{width:30px; height:30px}
+    .foot .social-link svg{width:15px; height:15px}
+
+    /* Secretaria sem organograma cadastrado */
+    .card.s.is-missing{background:var(--surface-2); border-style:dashed; box-shadow:none}
+    .card.s.is-missing:hover{transform:none; border-color:var(--border); box-shadow:none}
+    .card.s.is-missing::before{display:none}
+    .card.s.is-missing .org-name-main{color:var(--muted)}
+    .soon{display:inline-flex; align-items:center; gap:6px; font-size:12.5px; font-weight:600; color:#92400e; background:#fff8eb; border:1px solid #fde7b0; border-radius:999px; padding:3px 10px}
+    .soon svg{width:14px; height:14px}
+    .open{display:inline-flex; align-items:center; gap:6px; color:var(--rs-green-700); font-weight:700; font-size:14px; text-decoration:none}
+    .open svg{width:16px; height:16px; transition:transform .18s var(--ease)}
+    .card.s:hover .open svg{transform:translateX(3px)}
+    /* Link "esticado": o card inteiro é clicável, mas só existe um alvo de foco */
+    .open::after{content:""; position:absolute; inset:0; border-radius:inherit}
+    .open:focus-visible{box-shadow:none}
+
+    .empty-state{display:none; text-align:center; padding:40px 16px; background:var(--surface); border:1px dashed var(--border-strong); border-radius:var(--radius-lg); color:var(--muted)}
+    .empty-state strong{display:block; color:var(--ink); font-size:16px; margin-bottom:4px}
+    .empty-state .btn{margin-top:14px}
+  </style>
+  <script src="assets/ui.js"></script>
+  <script src="dados/organograma.js" defer></script>
+  <script src="dados/redes-sociais.js" defer></script>
 </head>
 <body>
+  <a class="skip-link" href="#grid">Pular para a lista de secretarias</a>
   <div class="stripe"></div>
   <header class="topbar">
-    <img src="assets/logo.png" alt="Organograma RS" onerror="this.style.display='none'">
-    <div class="title">Organograma do Governo do RS</div>
+    <a class="brand" href="organograma.html" aria-label="Organograma do Governo do RS – início">
+      <img src="assets/logo-80.webp" width="179" height="80" alt="" decoding="async" onerror="this.style.display='none'">
+      <span class="brand-divider" aria-hidden="true"></span>
+      <span class="brand-title">Organograma do Governo do RS</span>
+    </a>
     <div class="grow"></div>
-    <button class="btn" onclick="location.href='index.html'">Trocar usuário</button>
-    <button class="btn btn-primary" onclick="sessionStorage.removeItem('orgRS_auth');location.href='index.html'">Sair</button>
+    <div class="actions">
+      <button class="btn btn-ghost" onclick="location.href='index.html'" title="Trocar usuário" aria-label="Trocar usuário">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 3l4 4-4 4"/><path d="M20 7H9"/><path d="M8 21l-4-4 4-4"/><path d="M4 17h11"/></svg>
+        <span class="btn-label">Trocar usuário</span>
+      </button>
+      <button class="btn" onclick="sessionStorage.removeItem('orgRS_auth');location.href='index.html'" title="Sair" aria-label="Sair">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
+        <span class="btn-label">Sair</span>
+      </button>
+    </div>
   </header>
 
-  <section class="hero">
-    <div class="card">
-      <div class="left">
-        <h1>Secretarias do Estado</h1>
-        <p>Este sistema permite explorar, de forma simples e interativa, a estrutura do Governo do Estado do Rio Grande do Sul. Cada secretaria possui um organograma navegável por níveis (grupos, departamentos e órgãos vinculados). Use a busca para localizar rapidamente qualquer unidade e clique nos cards para abrir o detalhamento.</p>
-        <div class="search" style="margin-top:12px; max-width:520px">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M21 21l-4.2-4.2M11 19a8 8 0 1 1 0-16 8 8 0 0 1 0 16Z" stroke="#6b7aa6" stroke-width="2" stroke-linecap="round"/></svg>
-          <input id="q" type="text" placeholder="Buscar secretaria…" autocomplete="off" />
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="hero-card">
+      <div class="hero-copy">
+      <p class="eyebrow">Governo do Estado do Rio Grande do Sul</p>
+      <h1 id="hero-title">Secretarias do Estado</h1>
+      <p>Este sistema permite explorar, de forma simples e interativa, a estrutura do Governo do Estado do Rio Grande do Sul. Cada secretaria possui um organograma navegável por níveis (grupos, departamentos e órgãos vinculados). Use a busca para localizar rapidamente qualquer unidade e clique nos cards para abrir o detalhamento.</p>
+      <div class="hero-search">
+        <label class="sr-only" for="q">Buscar secretaria</label>
+        <div class="field">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M21 21l-4.2-4.2M11 19a8 8 0 1 1 0-16 8 8 0 0 1 0 16Z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          <input id="q" type="search" placeholder="Buscar secretaria…" autocomplete="off" aria-describedby="result-count" />
+          <kbd aria-hidden="true" title="Pressione / para buscar">/</kbd>
         </div>
       </div>
-      <div class="right"><img src="assets/logo.png" alt="Logo Organograma RS" style="max-height:160px; width:auto; display:block"></div>
+      </div>
+      <div class="hero-art"><img src="assets/logo-340.webp" width="762" height="340" alt="Logo Organograma RS" loading="lazy" decoding="async"></div>
     </div>
   </section>
 
   <main class="layout">
-    <section class="grid" id="grid"></section>
+    <div class="section-head">
+      <h2>Secretarias</h2>
+      <span class="result-count" id="result-count" aria-live="polite"></span>
+    </div>
+    <ul class="grid" id="grid"></ul>
+    <div class="empty-state" id="empty">
+      <strong>Nenhuma secretaria encontrada</strong>
+      <span id="empty-text"></span>
+      <div><button class="btn" type="button" id="clear-search">Limpar busca</button></div>
+    </div>
   </main>
 
   <script>
-    const SECRETARIAS = ["Casa Civil", "Casa Militar", "Secretaria da Agricultura, Pecuária, Produção Sustentável e Irrigação", "Secretaria de Desenvolvimento Social", "Secretaria da Cultura", "Secretaria de Comunicação", "Secretaria de Desenvolvimento Econômico", "Secretaria de Desenvolvimento Rural", "Secretaria de Desenvolvimento Urbano e Metropolitano", "Secretaria da Educação", "Secretaria do Esporte e Lazer", "Secretaria Extraordinária de Inclusão Digital e Apoio às Políticas de Equidade", "Secretaria Extraordinária de Relações Institucionais", "Secretaria da Fazenda", "Secretaria de Habitação e Regularização Fundiária", "Secretaria de Inovação, Ciência e Tecnologia", "Secretaria de Justiça, Cidadania e Direitos Humanos", "Secretaria de Logística e Transportes", "Secretaria do Meio Ambiente e Infraestrutura", "Secretaria de Obras Públicas", "Secretaria de Planejamento, Governança e Gestão", "Secretaria da Reconstrução Gaúcha", "Secretaria da Saúde", "Secretaria da Segurança Pública", "Secretaria de Sistemas Penal e Socioeducativo", "Secretaria de Trabalho e Desenvolvimento Profissional", "Secretaria de Turismo"];
+    const SECRETARIAS = ["Casa Civil", "Casa Militar", "Secretaria da Agricultura, Pecuária, Produção Sustentável e Irrigação", "Secretaria de Desenvolvimento Social", "Secretaria da Cultura", "Secretaria de Comunicação", "Secretaria de Desenvolvimento Econômico", "Secretaria de Desenvolvimento Rural", "Secretaria de Desenvolvimento Urbano e Metropolitano", "Secretaria da Educação", "Secretaria do Esporte e Lazer", "Secretaria Extraordinária de Inclusão Digital e Apoio às Políticas de Equidade", "Secretaria Extraordinária de Relações Institucionais", "Secretaria da Fazenda", "Secretaria de Habitação e Regularização Fundiária", "Secretaria de Inovação, Ciência e Tecnologia", "Secretaria de Justiça, Cidadania e Direitos Humanos", "Secretaria de Logística e Transportes", "Secretaria do Meio Ambiente e Infraestrutura", "Secretaria de Obras Públicas", "Secretaria de Planejamento, Governança e Gestão", "Secretaria da Reconstrução Gaúcha", "Secretaria da Saúde", "Secretaria da Segurança Pública", "Secretaria de Sistemas Penal e Socioeducativo", "Secretaria de Trabalho e Desenvolvimento Profissional", "Secretaria de Turismo", "Procuradoria-Geral do Estado"];
 
     const grid = document.getElementById('grid');
     const q = document.getElementById('q');
+    const resultCount = document.getElementById('result-count');
+    const emptyState = document.getElementById('empty');
+    const emptyText = document.getElementById('empty-text');
+    const MAX_TAGS = 3;
+    const ARROW_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg>';
+    const CLOCK_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>';
 
     function slug(s){
       return (s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9\s-]/g,'').trim().replace(/\s+/g,'-');
@@ -108,99 +180,107 @@
       return ['Gabinete','Diretorias','Departamentos','Órgãos Vinculados','Conselhos','Fundações'];
     }
 
-    function render(filter=''){
-      grid.innerHTML='';
-      const items = SECRETARIAS.slice().sort((a,b)=> a.localeCompare(b,'pt',{sensitivity:'base'}))
-        .filter(n => !filter || n.normalize('NFD').toLowerCase().includes(filter.normalize('NFD').toLowerCase()));
-      for(const name of items){
-        const div = document.createElement('article');
-        div.className='card s';
-        div.tabIndex=0;
+    // dados/organograma.js define DATA; se não carregar, os cards voltam às tags padrão.
+    const hasData = () => typeof DATA !== 'undefined';
+    const secretariaData = (key) => (hasData() && Object.prototype.hasOwnProperty.call(DATA, key)) ? DATA[key] : null;
 
-        const band = document.createElement('div'); band.className='band'; div.appendChild(band);
-        const body = document.createElement('div'); body.className='body';
+    function countItems(node){
+      let total = 0;
+      (function walk(n){ for(const c of (n.children || [])){ total++; walk(c); } })(node);
+      return total;
+    }
 
-        const h3 = document.createElement('h3'); h3.textContent = name; body.appendChild(h3);
+    function plural(n, one, many){ return n.toLocaleString('pt-BR') + ' ' + (n === 1 ? one : many); }
 
-        const tags = document.createElement('div'); tags.className='tags';
-        for(const t of getTags()){ const s=document.createElement('span'); s.className='tag'; s.textContent=t; tags.appendChild(s); }
-        body.appendChild(tags);
-
-        const foot = document.createElement('div'); foot.className='foot';
-        const meta = document.createElement('span'); meta.textContent=''; meta.style.display='none';
-        const a = document.createElement('a'); a.className='open'; a.textContent='Ver organograma'; a.href='secretaria.html#'+slug(name);
-        foot.append(meta,a); body.appendChild(foot);
-
-        div.appendChild(body);
-        grid.appendChild(div);
-
-        div.addEventListener('click', ()=> location.href = 'secretaria.html#'+slug(name));
+    function tagList(labels, hiddenCount){
+      const ul = document.createElement('ul'); ul.className = 'tags';
+      ul.setAttribute('aria-label', 'Grupos do organograma');
+      for(const t of labels){
+        const li = document.createElement('li'); li.className = 'tag'; li.textContent = t; li.title = t; ul.appendChild(li);
       }
+      if(hiddenCount > 0){
+        const more = document.createElement('li'); more.className = 'tag more';
+        more.textContent = '+' + hiddenCount;
+        more.title = plural(hiddenCount, 'outro grupo', 'outros grupos');
+        ul.appendChild(more);
+      }
+      return ul;
+    }
+
+    function cardMeta(text){
+      const p = document.createElement('p'); p.className = 'card-meta'; p.textContent = text; return p;
+    }
+
+    function buildCard(name){
+      const key = slug(name);
+      const data = secretariaData(key);
+      const isMissing = hasData() && !data;
+
+      const li = document.createElement('li');
+      const card = document.createElement('article');
+      card.className = 'card s' + (isMissing ? ' is-missing' : '');
+      card.appendChild(OrgUI.nameNode(name, 'h3'));
+
+      if(data){
+        const groups = (data.children || []).filter(c => c.type !== 'nota').map(c => c.name);
+        card.appendChild(cardMeta(plural(countItems(data), 'item', 'itens') + ' · ' + plural(groups.length, 'grupo principal', 'grupos principais')));
+        card.appendChild(tagList(groups.slice(0, MAX_TAGS), groups.length - MAX_TAGS));
+      } else if(isMissing){
+        card.appendChild(cardMeta('Estrutura ainda não cadastrada.'));
+      } else {
+        card.appendChild(tagList(getTags(), 0));
+      }
+
+      const foot = document.createElement('div'); foot.className = 'foot';
+      if(isMissing){
+        const soon = document.createElement('span'); soon.className = 'soon';
+        soon.innerHTML = CLOCK_ICON + '<span>Organograma em breve</span>';
+        foot.appendChild(soon);
+      } else {
+        const a = document.createElement('a'); a.className = 'open'; a.href = 'secretaria.html#' + key;
+        a.innerHTML = '<span>Ver organograma</span>' + ARROW_ICON;
+        a.setAttribute('aria-label', 'Ver organograma: ' + name);
+        foot.appendChild(a);
+      }
+      const socials = OrgUI.secretariaSocials(key, name);
+      if(socials.length) foot.appendChild(OrgUI.socialLinksNode(socials, name));
+      card.appendChild(foot);
+
+      li.appendChild(card);
+      return li;
+    }
+
+    function render(filter=''){
+      const term = OrgUI.normalize(filter).trim();
+      const items = SECRETARIAS.slice()
+        .sort(OrgUI.compareByMainName)
+        .filter(n => !term || OrgUI.normalize(n).includes(term));
+
+      grid.innerHTML = '';
+      for(const name of items){ grid.appendChild(buildCard(name)); }
+
+      resultCount.textContent = term
+        ? `${items.length} de ${SECRETARIAS.length} secretarias`
+        : `${SECRETARIAS.length} secretarias`;
+      emptyState.style.display = items.length ? 'none' : 'block';
+      emptyText.textContent = items.length ? '' : `Não há resultados para “${filter.trim()}”. Verifique a grafia ou tente outro termo.`;
     }
 
     q.addEventListener('input', ()=> render(q.value));
-    render();
+    document.getElementById('clear-search').addEventListener('click', ()=>{ q.value=''; render(); q.focus(); });
+    document.addEventListener('keydown', (e)=>{
+      const typing = /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName);
+      if(e.key === '/' && !typing){ e.preventDefault(); q.focus(); }
+      if(e.key === 'Escape' && document.activeElement === q && q.value){ q.value=''; render(); }
+    });
+    // Os arquivos de dados são carregados com "defer": renderiza quando já estão disponíveis.
+    document.addEventListener('DOMContentLoaded', ()=> render(q.value));
   </script>
 
-  <footer style="max-width:1200px;margin:32px auto 24px;padding:0 16px;color:#8a96ad;font-size:13px;">
-    <div style="height:4px;background:linear-gradient(90deg,#1FA54C,#FFC107,#C62828);border-radius:999px;margin-bottom:14px;"></div>
-    <div style="text-align:center;">© 2025 Feito por: Lucas Hartmann &amp; Gabriel Correa •</div>
+  <footer class="site-footer">
+    <div class="stripe"></div>
+    <div>© 2025 Feito por: Lucas Hartmann &amp; Gabriel Correa •</div>
   </footer>
-
-
-<!-- SOCIALS-BEGIN: home -->
-<script>
-(function(){
-  window.SOCIALS = window.SOCIALS || {};
-  function svgIcon(name){
-    const icons = {
-      facebook: `<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M13.5 9H16V6h-2.5C11.6 6 10 7.6 10 9.5V11H8v3h2v7h3v-7h2.1l.9-3H13v-1.5c0-.3.2-.5.5-.5Z"/></svg>`,
-      instagram: `<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10Zm0 8a3 3 0 1 1 0-6 3 3 0 0 1 0 6Zm5.5-8.9a1.1 1.1 0 1 0 0-2.2 1.1 1.1 0 0 0 0 2.2ZM17 3H7a4 4 0 0 0-4 4v10a4 4 0 0 0 4 4h10a4 4 0 0 0 4-4V7a4 4 0 0 0-4-4Zm2 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v10Z"/></svg>`,
-      youtube: `<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M21.6 7.2a3 3 0 0 0-2.1-2.1C18 4.7 12 4.7 12 4.7s-6 0-7.5.4a3 3 0 0 0-2.1 2.1C2 8.7 2 12 2 12s0 3.3.4 4.8a3 3 0 0 0 2.1 2.1c1.5.4 7.5.4 7.5.4s6 0 7.5-.4a3 3 0 0 0 2.1-2.1c.4-1.5.4-4.8.4-4.8s0-3.3-.4-4.8ZM10 15.5v-7l6 3.5-6 3.5Z"/></svg>`,
-      x: `<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 3h4.7l4.7 6.6L18.9 3H21l-6.7 7.6L21 21h-4.7l-5-7-5.5 7H3l7-8-7-10Z"/></svg>`
-    };
-    return icons[name] || '';
-  }
-  function addSocialsToCard(card, slug){
-    if(!slug || card.querySelector('.socials-row')) return;
-    const row = document.createElement('div');
-    row.className = 'socials-row';
-    ['facebook','instagram','youtube','x'].forEach(p => {
-      const href = (window.SOCIALS[slug] && window.SOCIALS[slug][p]) || '';
-      const a = document.createElement('a');
-      a.className = href ? p : 'disabled';
-      a.href = href || '#';
-      if(href){ a.target = '_blank'; a.rel = 'noopener'; }
-      a.setAttribute('aria-label', href ? p : (p+' não cadastrado'));
-      a.title = href ? p : 'Sem cadastro ainda';
-      a.innerHTML = svgIcon(p);
-      row.appendChild(a);
-    });
-    card.appendChild(row);
-  }
-  function getSlugFromHref(h){
-    try{ return new URL(h, location.href).searchParams.get('slug') || ''; }catch(e){ return ''; }
-  }
-  function scan(){
-    document.querySelectorAll('a[href*="secretaria.html"]').forEach(a=>{
-      const slug = getSlugFromHref(a.getAttribute('href'));
-      const card = a.closest('.card') || a.parentElement || null;
-      if(card) addSocialsToCard(card, slug);
-    });
-  }
-  document.addEventListener('DOMContentLoaded', scan);
-  window.addEventListener('load', scan);
-  new MutationObserver(scan).observe(document.documentElement, {subtree:true, childList:true});
-})();
-</script>
-<!-- SOCIALS-END: home -->
-
-
-<!-- SOCIALS-MAP: IRGA/SEAPI -->
-<script>
-window.SOCIALS = window.SOCIALS || {};
-window.SOCIALS["secretaria-da-agricultura-pecuaria-producao-sustentavel-e-irrigacao"] = Object.assign({}, window.SOCIALS["secretaria-da-agricultura-pecuaria-producao-sustentavel-e-irrigacao"] || {}, {"instagram":"https://www.instagram.com/irgars/?hl=en"});
-</script>
 
 </body>
 </html>
